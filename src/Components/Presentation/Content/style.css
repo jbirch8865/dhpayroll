@@ -1,0 +1,50 @@
+.smsMessageContent {
+	position: relative;
+    max-width: 35em;
+	background-color: #fff;
+	padding: 1.125em 1.5em;
+	font-size: 1.25em;
+	border-radius: 1rem;
+    box-shadow:	0 0.125rem 0.5rem rgba(0, 0, 0, .3), 0 0.0625rem 0.125rem rgba(0, 0, 0, .2);
+}
+
+.smsMessageSent::before {
+	content: '';
+	position: absolute;
+	width: 0;
+	height: 0;
+	bottom: 50%;
+	left: -10px;
+	border-top: 10px solid transparent;
+	border-bottom: 10px solid transparent; 	
+	border-right:10px solid white; 
+	filter: drop-shadow(-.165rem 0.03rem rgba(0, 0, 0, .1));
+}
+
+.smsMessageResponse::before {
+	content: '';
+	position: absolute;
+	width: 0;
+	height: 0;
+	bottom: 50%;
+	right: -10px;
+	border-top: 10px solid transparent;
+	border-bottom: 10px solid transparent; 	
+	border-left:10px solid white; 
+	filter: drop-shadow(.03rem -0.165rem rgba(0, 0, 0, .1));
+}
+
+.smsMessageUnread 
+{
+	background-color: #ffcccb;
+    box-shadow:	0 0.125rem 0.5rem rgba(107, 0, 0, 0.801), 0 0.0625rem 0.125rem rgba(122, 0, 0, 0.89);
+}
+
+.smsMessageResponseUnread::before {
+	border-left:10px solid rgba(107, 0, 0, 0.801); 
+	filter: drop-shadow(.03rem -0.165rem rgba(107, 0, 0, 0.801));
+}
+
+.smsMessageResponse {
+	cursor: pointer;
+}
