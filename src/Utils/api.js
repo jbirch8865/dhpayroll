@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import logging from "./logging";
 
-async function getBackendAzureADUserAccessToken() {
+export async function getBackendAzureADUserAccessToken() {
   try {
     const token = await planningAuthProvider.getAccessToken();
     process.env.NODE_ENV === "development" && logging("Logging this token because this is development"+JSON.stringify(token));
@@ -45,7 +45,7 @@ async function errorResponseHandler(error) {
   if (typeof error.response === "undefined") {
     logging("API is unreachable see next error for more details", "error")
     logging(error, "error");
-    return false;
+    throw new Error(error);
   }
   clearTimeout(session_exp);
   session_exp = setTimeout(() => {
@@ -82,6 +82,11 @@ export const Dispatchapi = axios.create({
   timeout: 5000,
 });
 
+export const Payrollapi = axios.create({
+  baseURL: process.env.REACT_APP_PAYROLL_URI + "/api",
+  timeout: 15000,
+});
+
 CDMapi.interceptors.request.use(requestHandler);
 CDMapi.interceptors.response.use(responseHandler, errorResponseHandler);
 
@@ -89,3 +94,5 @@ Planningapi.interceptors.request.use(requestHandler);
 Planningapi.interceptors.response.use(responseHandler, errorResponseHandler);
 Dispatchapi.interceptors.request.use(requestHandler);
 Dispatchapi.interceptors.response.use(responseHandler, errorResponseHandler);
+Payrollapi.interceptors.request.use(requestHandler);
+Payrollapi.interceptors.response.use(responseHandler, errorResponseHandler);

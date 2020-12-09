@@ -8,6 +8,9 @@ import Content from "../Components/Presentation/Content/Content";
 const { Header, Footer } = Layout;
 export default function Home() {
   const [darkMode, setDarkMode] = useState(true);
+  const [data, setData] = useState([]);
+  const [shifts, setShifts] = useState([]);
+
   return (
     <Layout>
       <Header style={{ height: "7vh" }}>
@@ -17,8 +20,8 @@ export default function Home() {
       </Header>
       <Layout>
         <LeftSider />
-        <Content />
-        <RightSider />
+        <Content data={data} setData={setData} shifts={shifts} setShifts={setShifts}/>
+        <RightSider data={data} setData={setData} shifts={shifts} setShifts={setShifts}/>
       </Layout>
       <Footer style={{ height: "7vh" }}></Footer>
     </Layout>

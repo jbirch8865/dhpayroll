@@ -2,6 +2,7 @@ import React, {useEffect} from 'react'
 import {Tooltip,Dropdown} from "antd"
 import {SyncOutlined,InsertRowRightOutlined} from "@ant-design/icons"
 import {CDMapi} from "../../../Utils/api"
+import TrainingStep from '../../Functional/ReactTour/TrainingStep';
 export default function TagHeader(props)
 {
     const loadWorkforce = () => {
@@ -20,13 +21,13 @@ export default function TagHeader(props)
     return(
         <>
             <Tooltip title="Refresh Table">
-                <SyncOutlined onClick={() => loadWorkforce()} />
+            <TrainingStep title="To refresh the list of flaggers click here." trainingName="content_tag_header_refresh"/><SyncOutlined className="content_tag_header_refresh" onClick={() => loadWorkforce()} />
             </Tooltip>
-            {/* <Tooltip title="Column Chooser">
+            <Tooltip title="Column Chooser">
                 <Dropdown overlay={props.columnChooserMenu} trigger={["click"]}>
                     <InsertRowRightOutlined />
                 </Dropdown>
-            </Tooltip> */}
+            </Tooltip>
         </>
     )
 } 

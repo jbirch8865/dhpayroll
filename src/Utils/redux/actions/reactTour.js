@@ -1,5 +1,5 @@
 import * as Actions from "./actionConstants";
-import { Planningapi } from "../../api";
+import { Payrollapi } from "../../api";
 export function addTrainingStep(step) {
   return {
     type: Actions.ADD_TRAINING_STEP,
@@ -47,8 +47,7 @@ function setUserCompletedTrainings(completedtrainings) {
 
 export function GetUserCompletedTrainings() {
   return (dispatch) => {
-    if(true){return false}
-    Planningapi.get("/reacttour/usercompletedtrainingsteps")
+    Payrollapi.get("/reacttour/usercompletedtrainingsteps")
       .then(function (response) {
         dispatch(setUserCompletedTrainings(response.data.usercompletedtrainingsteps))
         return true
@@ -62,8 +61,7 @@ export function GetUserCompletedTrainings() {
 
 export function CompleteUserTraining(name) {
   return dispatch => {
-    if(true){return false}
-    Planningapi.post("/reacttour/usercompletedtrainingsteps",{name}).then(function (response) {
+    Payrollapi.post("/reacttour/usercompletedtrainingsteps",{name}).then(function (response) {
     }).catch(function (error) {});
   }
 }

@@ -4,7 +4,13 @@ import initialState from "../initialState";
 export default function trainingStepsReducer(state = initialState, action) {
   switch (action.type) {
     case Actions.ADD_TRAINING_STEP:
-      return { ...state, steps: [...state.steps, action.step] };
+      if(state.steps.filter(step => step.selector === action.step.selector).length > 0)
+      {
+        return state;
+      }else
+      {
+        return { ...state, steps: [...state.steps, action.step] };
+      }
     case Actions.REMOVE_TRAINING_STEP:
       return { ...state, steps: state.steps.filter(step => step.selector !== action.step.selector) };
     case Actions.REMOVE_ALL_TRAINING_STEPS:
