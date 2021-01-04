@@ -1,20 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Tour from "reactour";
 import { connect } from "react-redux";
 import * as actions from "../../../Utils/redux/actions/reactTour";
-import GetUserCompletedTraining from "../../Functional/ReactTour/GetUserCompletedTrainingSteps";
+import GetUserCompletedTrainings from '../../Functional/ReactTour/GetUserCompletedTrainingSteps';
 const TourWrapper = (props) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [goToStep, setGoToStep] = useState(0);
+  useEffect(() => props.getRegisteredTrainings(),[])
+  const hideTrainingTour = () => {
+    props.hideTrainingTour()
+    setCurrentStep(0)
+    setTimeout(() => props.completedTraining(props.steps[currentStep].selector.replace(".", "")),100)
+    setTimeout(() => props.getUserCompletedTrainings(),300)
+  }
+
   return (
     <>
-      <GetUserCompletedTraining />
+      <GetUserCompletedTrainings />
       {props.steps.length !== 0 && (
         <Tour
           steps={props.steps}
           isOpen={props.showTour}
           showNumber={true}
-          onRequestClose={() => props.hideTrainingTour()}
+          onRequestClose={() => {
+            hideTrainingTour()
+          }
+         }
           closeWithMask={false}
           getCurrentStep={(curr) => setCurrentStep(curr)}
           showButtons={true}
@@ -25,13 +36,13 @@ const TourWrapper = (props) => {
             );
           }}
           previousStep={() => {
-            setGoToStep(currentStep);
+            setGoToStep(currentStep - 1);
           }}
-          lastStepNextButton={"I'm so over this"}
+          prevButton={<></>}
+          showCloseButton={false}
+          lastStepNextButton={"Click here and do great things!"}
           onBeforeClose={() => {
-             props.completedTraining(
-               props.steps[currentStep].selector.replace(".", "")
-            );
+            
           }}
           disableDotsNavigation={true}
           disableKeyboardNavigation={true}
@@ -47,6 +58,8 @@ const mapDispatchToProps = (dispatch) => {
     hideTrainingTour: () => dispatch(actions.hideTrainingTour()),
     completedTraining: (training) =>
       dispatch(actions.CompleteUserTraining(training)),
+    getRegisteredTrainings: () => dispatch(actions.getRegisteredTrainings()),
+    getUserCompletedTrainings: () => dispatch(actions.GetUserCompletedTrainings())
   };
 };
 

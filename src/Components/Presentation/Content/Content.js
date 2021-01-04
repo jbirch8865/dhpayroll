@@ -13,6 +13,7 @@ export default function Content(props) {
   const [filteredData, setFilteredData] = useState([]);
   const [loadingWorkforce, setLoadingWorkforce] = useState(false);
   const [timecards,setTimecards] = useState([])
+  const [previousShifts,setPreviousShifts] = useState([])
   const [loadingTimecards, setLoadingTimecards] = useState(false)
 
   const [selectedColumns, setSelectedColumns] = useState([
@@ -47,7 +48,7 @@ export default function Content(props) {
             </div>
           </Dropdown>
         ),
-        filterIcon: <><TrainingStep title="Use the filter to see people missing timecards." trainingName="content_workforcetable_filter"/><FilterOutlined className="content_workforcetable_filter" /></>,
+        filterIcon: <><TrainingStep trainingImportance={0} title="Use the filter to see people missing timecards." trainingName="content_workforcetable_filter"/><FilterOutlined className="content_workforcetable_filter" /></>,
         filters: filters(props.data),
         onFilter: (value, record) => props.shifts.filter(shift => shift.shift_has_needs.filter(need => need.people_id === record.person_id).length > 0).length - props.shifts.filter(shift => shift.shift_has_needs.filter(need => need.people_id === record.person_id && timecards.filter(timecard => timecard.need_id === need.id).length > 0).length > 0).length > 0,
         sorter: (a, b) => a.first_name.localeCompare(b.first_name),
@@ -150,7 +151,8 @@ export default function Content(props) {
         render: (text, record, index) => <></>
       },
     ]);
-    props.shifts.length !== 0 && timecards.length === 0 && loadingTimecards === false && (setLoadingTimecards(true) || true) && Actions.getTimeCards(props.shifts.map(shift => shift.shift_has_needs.map(need => need.id)).flat()).then(response => {setTimecards(response.data.timecards);setLoadingTimecards(false)})
+    props.shifts.length !== 0 && JSON.stringify(previousShifts) !== JSON.stringify(props.shifts) && loadingTimecards === false && (setLoadingTimecards(true) || true) && Actions.getTimeCards(props.shifts.map(shift => shift.shift_has_needs.map(need => need.id)).flat()).then(response => {setTimecards(response.data.timecards);setLoadingTimecards(false)})
+    setPreviousShifts([...props.shifts])
   }, [selectedColumns, props.data, props.shifts,timecards]);
   return (
     <Layout.Content>

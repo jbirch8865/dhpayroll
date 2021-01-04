@@ -21,7 +21,7 @@ export default function TagHeader(props)
     return(
         <>
             <Tooltip title="Refresh Table">
-            <TrainingStep title="To refresh the list of flaggers click here." trainingName="content_tag_header_refresh"/><SyncOutlined className="content_tag_header_refresh" onClick={() => loadWorkforce()} />
+            <TrainingStep trainingImportance={0} title="To refresh the list of flaggers click here." trainingName="content_tag_header_refresh"/><SyncOutlined className="content_tag_header_refresh" onClick={() => loadWorkforce()} />
             </Tooltip>
             <Tooltip title="Column Chooser">
                 <Dropdown overlay={props.columnChooserMenu} trigger={["click"]}>

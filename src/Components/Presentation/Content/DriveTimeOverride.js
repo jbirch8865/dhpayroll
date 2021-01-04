@@ -21,10 +21,7 @@ export default function DriveTimeOverride(props) {
   const [overRide, setOverRide] = useState({
     mins,
     miles,
-    justification:
-      props.drivetime.justification === ""
-        ? "Cause I'm the boss"
-        : props.drivetime.justification,
+    justification: props.drivetime.justification,
   });
   const [overRiding, setOverRiding] = useState(false);
   return (
@@ -32,7 +29,7 @@ export default function DriveTimeOverride(props) {
       trigger="click"
       content={
         <>
-          For the love of God why?
+          Why are we overriding google?
           <Input.TextArea
             value={overRide.justification}
             onChange={(value) =>
@@ -57,35 +54,38 @@ export default function DriveTimeOverride(props) {
             onChange={(value) => setOverRide({ ...overRide, miles: value })}
           />
           <br />
-          <Button
-            onClick={() => {
-              setOverRiding(true);
-              if (overRide.justification === "") {
-                message.error(
-                  "You must justify overriding the approved drive time"
-                );
-              } else {
-                Actions.overRideDriveTime(
-                  props.drivetime.id,
-                  overRide.mins < 0 ? 0 : overRide.mins,
-                  overRide.miles < 0 ? 0 : overRide.miles,
-                  overRide.justification
-                ).then((response) => {
-                  props.getDriveTime(
-                    props.drivetime.id,
-                    [props.drivetime.need_id],
-                    false
-                  );
-                  setOverRiding(false);
-                });
-              }
-            }}
-            loading={overRiding}
-            type="danger"
-            ghost
-          >
-            Override
-          </Button>
+          <div style={{ height: "40px" }}>
+            <div style={{ float: "right" }}>
+              <Button
+                onClick={() => {
+                  if (overRide.justification === "") {
+                    message.error(
+                      "You must justify overriding the approved drive time"
+                    );
+                  } else {
+                    setOverRiding(true);
+                    Actions.overRideDriveTime(
+                      props.drivetime.id,
+                      overRide.mins < 0 ? 0 : overRide.mins,
+                      overRide.miles < 0 ? 0 : overRide.miles,
+                      overRide.justification
+                    ).then((response) => {
+                      props.getDriveTime(
+                        props.drivetime.id,
+                        [props.drivetime.need_id],
+                        false
+                      );
+                      setOverRiding(false);
+                    });
+                  }
+                }}
+                loading={overRiding}
+                type="danger"
+              >
+                Override
+              </Button>
+            </div>
+          </div>
         </>
       }
       title="Override"
@@ -94,7 +94,7 @@ export default function DriveTimeOverride(props) {
         <Tooltip
           title={
             <>
-              Distance From Office
+              Round trip from office
               <br />
               {props.drivetime.paid_time_allowable +
                 60 +
@@ -102,7 +102,7 @@ export default function DriveTimeOverride(props) {
                 (props.drivetime.paid_distance_allowable + 60) +
                 " mi."}
               <br />
-              Distance From Home
+              Round trip from home
               <br />
               {props.drivetime.home_drive_time +
                 60 +
@@ -115,6 +115,7 @@ export default function DriveTimeOverride(props) {
           }
         >
           <TrainingStep
+            trainingImportance={1}
             title="Click here to over ride the drive time or distance."
             trainingName="content_drivetimeoverride_authorized"
           />
@@ -123,7 +124,7 @@ export default function DriveTimeOverride(props) {
               " mins/" +
               (miles < 0 ? 0 : miles) +
               " mi."}
-          </p>
+          </span>
         </Tooltip>
         {props.drivetime.actual_time !== null ||
         props.drivetime.actual_distance !== null ? (
@@ -157,6 +158,7 @@ export default function DriveTimeOverride(props) {
             }
           >
             <TrainingStep
+              trainingImportance={1}
               title="This has been previously overridden.  Click here to clear the overide."
               trainingName="content_drivetimeoverride_overridden"
             />
@@ -174,6 +176,7 @@ export default function DriveTimeOverride(props) {
         ) : (
           <>
             <TrainingStep
+              trainingImportance={1}
               title="We use current live google maps information to calculate our drive distance and drive times, we do include what google expects traffic to be at the time of the start of the shift.  Click here to get new google data for this shift."
               trainingName="content_drivetimeoverride_refresh"
             />

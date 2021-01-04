@@ -191,6 +191,7 @@ const CommunicationTable = (props) => {
   return (
     <>
       <TrainingStep
+        trainingImportance={0}
         title="You can search by employee name, number or skill."
         trainingName="content_workforcetable_search"
       />
@@ -211,12 +212,6 @@ const CommunicationTable = (props) => {
         expandable={{
           defaultExpandedRowKeys: [],
           expandedRowRender: (record) => {
-            let retries = {};
-            let maxRetries =
-              typeof process.env.REACT_APP_GET_DRIVE_TIME_RETRIES ===
-              "undefined"
-                ? 5
-                : process.env.REACT_APP_GET_DRIVE_TIME_RETRIES;
             // const getDriveTime = (rowId, needs, override_google) => {
             //   retries = !retries.hasOwnProperty(rowId)
             //     ? { ...retries, [rowId]: 0 }
@@ -358,6 +353,7 @@ const CommunicationTable = (props) => {
           ) : (
             <>
                 <TrainingStep
+                  trainingImportance={0}
                   title="Expand to see shifts worked and which ones have timecards received."
                   trainingName="content_workforcetable_expand"
                 />

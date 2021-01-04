@@ -33,12 +33,14 @@ export default function RightSider(props) {
       value[0].format("YYYY-MM-DD"),
       value[1].format("YYYY-MM-DD")
     ).then((results) => props.setShifts(results.data.shifts));
+    
   }, [value]);
   return (
     <Layout.Sider collapsible collapsed={collapse} onCollapse={setCollapse}>
       <Menu style={{ height: "86vh" }}>
         <Menu.Item key="0" icon={<CalendarOutlined />}>
           <TrainingStep
+            trainingImportance={0}
             title="Click to pick the week you want to look at."
             trainingName="rightsider_rightsider_date_picker"
           />
@@ -51,7 +53,8 @@ export default function RightSider(props) {
               ],
             }}
             className="rightsider_rightsider_date_picker"
-            value={hackValue || value}
+            value={hackValue || value}  
+            format={'MM-D'}
             disabledDate={disabledDate}
             onCalendarChange={(val) => setDates(val)}
             onChange={(val) => setValue(val)}

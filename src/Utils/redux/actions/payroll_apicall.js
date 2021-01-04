@@ -1,4 +1,19 @@
 import { Payrollapi } from "../../api";
+import * as Actions from "./actionConstants"
+
+function setUserPreferences(userpreferences) {
+  return {
+    type: Actions.GET_USER_PREFERENCES,
+    userpreferences,
+  };
+}
+
+function setUserPreferencesLoading()
+{
+  return {
+    type: Actions.GET_USER_PREFERENCES_LOADING
+  };
+}
 
 export function getTimeCards(needs) {
   return Payrollapi.get("/timecards", {
@@ -20,6 +35,18 @@ export function getDriveTime(needs,override_google) {
   }
   return Payrollapi.get("/drivetimes", params);
 }
+
+export function getUserPreferences() {
+  return (dispatch) => {
+    dispatch(setUserPreferencesLoading())
+    Payrollapi.get("/userpreferences")
+      .then(function (response) {
+        dispatch(setUserPreferences(response.data.userpreferences))
+        return true
+      })
+  };
+}
+
 
 export function addTimeCard(need_id,people_id,description) {
   return Payrollapi.post("/timecards", {

@@ -25,13 +25,6 @@ export function gotoTrainingStep(step) {
     currentStep: step,
   };
 }
-
-export function showTrainingTour() {
-  return {
-    type: Actions.SHOW_TRAINING_TOUR,
-  };
-}
-
 export function hideTrainingTour() {
   return {
     type: Actions.HIDE_TRAINING_TOUR,
@@ -45,11 +38,31 @@ function setUserCompletedTrainings(completedtrainings) {
   };
 }
 
+function setRegisteredTrainings(registeredtrainings) {
+  return {
+    type: Actions.GET_REGISTERED_TRAININGS,
+    registeredtrainings,
+  };
+}
 export function GetUserCompletedTrainings() {
   return (dispatch) => {
     Payrollapi.get("/reacttour/usercompletedtrainingsteps")
       .then(function (response) {
         dispatch(setUserCompletedTrainings(response.data.usercompletedtrainingsteps))
+        return true
+      })
+      .catch(function (error) {
+        dispatch(removeAllTrainingSteps())
+        return false
+      });
+  };
+}
+
+export function getRegisteredTrainings() {
+  return (dispatch) => {
+    Payrollapi.get("/reacttour/trainingsteps")
+      .then(function (response) {
+        dispatch(setRegisteredTrainings(response.data.trainingsteps))
         return true
       })
       .catch(function (error) {
