@@ -71,15 +71,15 @@ async function errorResponseHandler(error) {
 
 export const CDMapi = axios.create({
   baseURL: process.env.REACT_APP_CDM_URI + "/api",
-  timeout: 5000,
+  timeout: 15000,
 });
 export const Planningapi = axios.create({
   baseURL: process.env.REACT_APP_PLANNING_URI + "/api",
-  timeout: 5000,
+  timeout: 15000,
 });
 export const Dispatchapi = axios.create({
   baseURL: process.env.REACT_APP_DISPATCH_URI + "/api",
-  timeout: 5000,
+  timeout: 15000,
 });
 
 export const Payrollapi = axios.create({

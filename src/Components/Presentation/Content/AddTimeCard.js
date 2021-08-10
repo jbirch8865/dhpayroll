@@ -77,7 +77,7 @@ return (<Upload.Dragger {...uploadProps}>
           ).then((response) =>
             Actions.getTimeCards(
               props.shifts
-                .map((shift) => shift.shift_has_needs.map((need) => need.id))
+                .map((shift) => shift.needs.map((need) => need.id))
                 .flat()
             ).then((response) => {props.setTimecards(response.data.timecards);setSingleLoading(false)})
           );
@@ -85,7 +85,7 @@ return (<Upload.Dragger {...uploadProps}>
             Actions.deleteTimeCard(timeCardSubmitted.uid).then((response) =>
               Actions.getTimeCards(
                 props.shifts
-                  .map((shift) => shift.shift_has_needs.map((need) => need.id))
+                  .map((shift) => shift.needs.map((need) => need.id))
                   .flat()
               ).then((response) => {props.setTimecards(response.data.timecards);setSingleLoading(false)})
             )

@@ -8,9 +8,9 @@ export default function DriveTimeOverride(props) {
   const mins =
     props.drivetime.actual_time !== null
       ? props.drivetime.actual_time
-      : props.drivetime.paid_time_allowable < props.drivetime.home_drive_time
+      : props.drivetime.home_distance > 60 && props.drivetime.office_distance > 60
       ? props.drivetime.paid_time_allowable
-      : props.drivetime.home_drive_time;
+      : 0;
   const miles =
     props.drivetime.actual_distance !== null
       ? props.drivetime.actual_distance
@@ -110,6 +110,8 @@ export default function DriveTimeOverride(props) {
                 (props.drivetime.home_drive_distance + 60) +
                 " mi."}
               <br />
+              {'Closest Office ' + props.drivetime.office}
+              <br />
               {props.drivetime.justification}
             </>
           }
@@ -120,10 +122,8 @@ export default function DriveTimeOverride(props) {
             trainingName="content_drivetimeoverride_authorized"
           />
           <span className="content_drivetimeoverride_authorized">
-            {(mins < 0 ? 0 : mins) +
-              " mins/" +
-              (miles < 0 ? 0 : miles) +
-              " mi."}
+            {mins +
+              " mins"}
           </span>
         </Tooltip>
         {props.drivetime.actual_time !== null ||
@@ -152,6 +152,8 @@ export default function DriveTimeOverride(props) {
                     ? 0
                     : props.drivetime.home_drive_distance) +
                   " mi."}
+                <br />
+                {'Closest Office ' + props.drivetime.office}
                 <br />
                 {props.drivetime.justification}
               </>

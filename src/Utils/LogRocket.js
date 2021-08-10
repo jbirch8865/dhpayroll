@@ -32,7 +32,6 @@ export default function BuildLogRocket(accountInfo)
       },
     }})
     setupLogRocketReact(LogRocket)
-    logging(accountInfo)
     if (typeof window !== "undefined") {
       LogRocket.identify(accountInfo.account.name, {
         name: accountInfo.account.name,

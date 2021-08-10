@@ -1,11 +1,12 @@
-import { Table, Input, Spin, Alert } from "antd";
+import {Table, Input, Spin, Alert, Tooltip} from "antd";
 import React, { useState, useRef, useEffect } from "react";
 import MessageThread from "./MessageThread";
 import * as Actions from "../../../Utils/redux/actions/payroll_apicall";
 import AddTimeCard from "./AddTimeCard";
 import DriveTimeOverride from "./DriveTimeOverride";
 import TrainingStep from "../../Functional/ReactTour/TrainingStep";
-import { MinusCircleOutlined, PlusSquareOutlined } from "@ant-design/icons";
+import {CloseCircleTwoTone, MinusCircleOutlined, PlusSquareOutlined, SyncOutlined} from "@ant-design/icons";
+import { getTwoToneColor, setTwoToneColor } from '@ant-design/icons';
 const CommunicationTable = (props) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [searchValue, setSearchValue] = useState("");
@@ -29,14 +30,11 @@ const CommunicationTable = (props) => {
                       .concat(person.last_name)
                       .toLowerCase()
                       .includes(value.toLowerCase()) ||
-                    person.has_skills.filter((skill) =>
-                      skill.skill.Name.toLowerCase().includes(
+                    person.skills.filter((skill) =>
+                      skill.Name.toLowerCase().includes(
                         value.toLowerCase()
                       )
-                    ).length > 0 ||
-                    (value.toLowerCase() === "unread" &&
-                      person.has_sent_sms.length > 0) ||
-                    person.phone_number.includes(value)
+                    ).length > 0
                 )
               )
               .map((group, index, array) => {
@@ -82,10 +80,8 @@ const CommunicationTable = (props) => {
                       .concat(person.last_name)
                       .toLowerCase()
                       .includes(value.toLowerCase()) ||
-                    (value.toLowerCase() === "unread" &&
-                      person.has_sent_sms.length > 0) ||
-                    person.has_skills.filter((skill) =>
-                      skill.skill.Name.toLowerCase().includes(
+                    person.skills.filter((skill) =>
+                      skill.Name.toLowerCase().includes(
                         value.toLowerCase()
                       )
                     ).length > 0 ||
@@ -100,7 +96,7 @@ const CommunicationTable = (props) => {
       }
     }
   };
-
+  setTwoToneColor('#FF0000');
   function loadingDriveTime(needs) {
     needs.map(
       (need_id) =>
@@ -113,15 +109,29 @@ const CommunicationTable = (props) => {
     return true;
   }
 
-  const getDriveTime = (rowId, needs, override_google) => {
-    let retries = {};
-    let maxRetries =
-      typeof process.env.REACT_APP_GET_DRIVE_TIME_RETRIES === "undefined"
-        ? 5
-        : process.env.REACT_APP_GET_DRIVE_TIME_RETRIES;
-    retries = !retries.hasOwnProperty(rowId)
-      ? { ...retries, [rowId]: 0 }
-      : { ...retries };
+    function driveTimesFailed(needs) {
+        needs.map(
+            (need_id) =>
+                (driveRef.current = {
+                    ...driveRef.current,
+                    [need_id]: <><Tooltip title={"There was an error getting drive times from google.  Please try clicking the refresh button.  If that doesn't work let Joel know."}>
+                                    <CloseCircleTwoTone />
+                                </Tooltip><SyncOutlined
+            onClick={() =>
+                getDriveTime(
+                    null,
+                    [need_id],
+                    true
+                )
+            }
+        /></>,
+                })
+        );
+        setDriveTime({ ...driveRef.current });
+        return true;
+    }
+
+    const getDriveTime = (rowId, needs, override_google) => {
     loadingDriveTime(needs);
     Actions.getDriveTime(needs, override_google)
       .then((response) => {
@@ -141,27 +151,28 @@ const CommunicationTable = (props) => {
         }
       })
       .catch((error) => {
-        let retrySeconds = ++retries[rowId] * 1000;
-        console.log(
-          "retrying after " +
-            retrySeconds +
-            " seconds currently on " +
-            retries[rowId] +
-            " attempt"
-        );
-        retries[rowId] < maxRetries
-          ? setTimeout(
-              () => getDriveTime(rowId, needs, override_google),
-              retrySeconds
-            )
-          : needs.map(
-              (need_id) =>
-                (driveRef.current = {
-                  ...driveRef.current,
-                  [need_id]: <Alert message="No Response" type="error" />,
-                })
-            );
-        setDriveTime({ ...driveRef.current });
+          driveTimesFailed(needs)
+        // let retrySeconds = ++retries[rowId] * 1000;
+        // console.log(
+        //   "retrying after " +
+        //     retrySeconds +
+        //     " seconds currently on " +
+        //     retries[rowId] +
+        //     " attempt"
+        // );
+        // retries[rowId] < maxRetries
+        //   ? setTimeout(
+        //       () => getDriveTime(rowId, needs, override_google),
+        //       retrySeconds
+        //     )
+        //   : needs.map(
+        //       (need_id) =>
+        //         (driveRef.current = {
+        //           ...driveRef.current,
+        //           [need_id]: <Alert message="No Response" type="error" />,
+        //         })
+        //     );
+        // setDriveTime({ ...driveRef.current });
       });
   };
 
@@ -170,7 +181,7 @@ const CommunicationTable = (props) => {
     props.data.map((person) => {
       let needs1 = [];
       props.shifts.map((shift) =>
-        shift.shift_has_needs.map(
+        shift.needs.map(
           (need) =>
             need.people_id === person.person_id &&
             typeof driveTime[need.id] === "undefined" &&
@@ -256,7 +267,7 @@ const CommunicationTable = (props) => {
             // };
             let needs1 = [];
             props.shifts.map((shift) =>
-              shift.shift_has_needs.map(
+              shift.needs.map(
                 (need) =>
                   need.people_id === record.person_id &&
                   typeof driveTime[need.id] === "undefined" &&
@@ -283,8 +294,7 @@ const CommunicationTable = (props) => {
                 key: "name",
                 width: "25%",
                 render: (text, record) =>
-                  record.shift_has_contractor.belongs_to_company.customer
-                    .customer_name,
+                  record.contractor.company[0].customer_name,
               },
               {
                 name: "Location",
@@ -292,7 +302,7 @@ const CommunicationTable = (props) => {
                 dataIndex: "location",
                 key: "location",
                 render: (text, record) =>
-                  record.shift_has_address.street_address,
+                  record.address.street_address,
                 width: "30%",
               },
               {
@@ -303,7 +313,7 @@ const CommunicationTable = (props) => {
                 width: "15%",
                 render: (text, rowRecord, index) => {
                   return driveTime[
-                    rowRecord.shift_has_needs.filter(
+                    rowRecord.needs.filter(
                       (need) => need.people_id === record.person_id
                     )[0].id
                   ];
@@ -318,7 +328,7 @@ const CommunicationTable = (props) => {
                 render: (text, rowRecord, index) => (
                   <AddTimeCard
                     need_id={
-                      rowRecord.shift_has_needs.filter(
+                      rowRecord.needs.filter(
                         (need) => need.people_id === record.person_id
                       )[0].id
                     }
@@ -334,7 +344,7 @@ const CommunicationTable = (props) => {
             ];
             const data = props.shifts.filter(
               (shift) =>
-                shift.shift_has_needs.filter(
+                shift.needs.filter(
                   (need) => need.people_id === record.person_id
                 ).length > 0
             );
@@ -344,7 +354,7 @@ const CommunicationTable = (props) => {
           props.shifts
           .filter(
             (shift) =>
-              shift.shift_has_needs.filter(
+              shift.needs.filter(
                 (need) => need.people_id === record.person_id
               ).length > 0
           )
