@@ -50,7 +50,7 @@ export default function Content(props) {
         ),
         filterIcon: <><TrainingStep trainingImportance={0} title="Use the filter to see people missing timecards." trainingName="content_workforcetable_filter"/><FilterOutlined className="content_workforcetable_filter" /></>,
         filters: filters(props.data),
-        onFilter: (value, record) => props.shifts.filter(shift => shift.needs.filter(need => need.people_id === record.person_id).length > 0).length - props.shifts.filter(shift => shift.needs.filter(need => need.people_id === record.person_id && timecards.filter(timecard => timecard.need_id === need.id).length > 0).length > 0).length > 0,
+        onFilter: (value, record) => props.shifts.filter(shift => shift.needs.filter(need => need.shift_id === record.get_key).length > 0).length - props.shifts.filter(shift => shift.needs.filter(need => need.shift_id === record.get_key && timecards.filter(timecard => timecard.need_id === need.get_key).length > 0).length > 0).length > 0,
         sorter: (a, b) => a.first_name.localeCompare(b.first_name),
         sortDirections: ["ascend", "descend", "ascend"],
       },
@@ -67,7 +67,7 @@ export default function Content(props) {
         dataIndex: "",
         key: "missingTimecards",
         width: "30%",
-        render: (text, record, index) => props.shifts.filter(shift => shift.needs.filter(need => need.people_id === record.person_id).length > 0).length - props.shifts.filter(shift => shift.needs.filter(need => need.people_id === record.person_id && timecards.filter(timecard => timecard.need_id === need.id).length > 0).length > 0).length
+        render: (text, record, index) => props.shifts.filter(shift => shift.needs.filter(need => need.people_id === record.get_key).length > 0).length - props.shifts.filter(shift => shift.needs.filter(need => need.people_id === record.get_key && timecards.filter(timecard => timecard.need_id === need.get_key).length > 0).length > 0).length
       },
       {
         name: "numberOfShifts",
@@ -78,7 +78,7 @@ export default function Content(props) {
         render: (text, record, index) => typeof props.shifts !== "undefined" && (
               <p>
                 {
-                  props.shifts.filter((shift) => shift.needs.filter(need => need.people_id !== null && need.flagger.person_id === record.person_id).length > 0).length
+                  props.shifts.filter((shift) => shift.needs.filter(need => need.people_id !== null && need.employee.get_key === record.get_key).length > 0).length
                 }
               </p>
             )
@@ -151,7 +151,7 @@ export default function Content(props) {
         render: (text, record, index) => <></>
       },
     ]);
-    props.shifts.length !== 0 && JSON.stringify(previousShifts) !== JSON.stringify(props.shifts) && loadingTimecards === false && (setLoadingTimecards(true) || true) && Actions.getTimeCards(props.shifts.map(shift => shift.needs.map(need => need.id)).flat()).then(response => {setTimecards(response.data.timecards);setLoadingTimecards(false)})
+    props.shifts.length !== 0 && JSON.stringify(previousShifts) !== JSON.stringify(props.shifts) && loadingTimecards === false && (setLoadingTimecards(true) || true) && Actions.getTimeCards(props.shifts.map(shift => shift.needs.map(need => need.get_key)).flat()).then(response => {setTimecards(response.data.timecards);setLoadingTimecards(false)})
     setPreviousShifts([...props.shifts])
   }, [selectedColumns, props.data, props.shifts,timecards]);
   return (

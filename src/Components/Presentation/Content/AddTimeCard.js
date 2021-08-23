@@ -26,7 +26,7 @@ export default function AddTimeCard(props) {
   //   data: (file) => {
   //     return {
   //       need_id: props.need_id,
-  //       people_id: props.person_id,
+  //       people_id: props.get_key,
   //       description: file.name,
   //     };
   //   },
@@ -77,7 +77,7 @@ return (<Upload.Dragger {...uploadProps}>
           ).then((response) =>
             Actions.getTimeCards(
               props.shifts
-                .map((shift) => shift.needs.map((need) => need.id))
+                .map((shift) => shift.needs.map((need) => need.get_key))
                 .flat()
             ).then((response) => {props.setTimecards(response.data.timecards);setSingleLoading(false)})
           );
@@ -85,7 +85,7 @@ return (<Upload.Dragger {...uploadProps}>
             Actions.deleteTimeCard(timeCardSubmitted.uid).then((response) =>
               Actions.getTimeCards(
                 props.shifts
-                  .map((shift) => shift.needs.map((need) => need.id))
+                  .map((shift) => shift.needs.map((need) => need.get_key))
                   .flat()
               ).then((response) => {props.setTimecards(response.data.timecards);setSingleLoading(false)})
             )

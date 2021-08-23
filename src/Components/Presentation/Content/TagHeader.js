@@ -9,7 +9,7 @@ export default function TagHeader(props)
         props.setLoadingWorkforce(true);
         CDMapi.get("/employees").then((json) => {
           const returnData = json.data.employees.map((person) => {
-            return { ...person, key: person.person_id };
+            return { ...person, key: person.get_key };
           });
           props.setData(returnData);
           props.setFilteredData(returnData);

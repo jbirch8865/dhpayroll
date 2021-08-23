@@ -179,18 +179,19 @@ const CommunicationTable = (props) => {
   useEffect(() => {
     let numOfCalls = 0;
     props.data.map((person) => {
+        console.log(person)
       let needs1 = [];
       props.shifts.map((shift) =>
         shift.needs.map(
           (need) =>
-            need.people_id === person.person_id &&
-            typeof driveTime[need.id] === "undefined" &&
-            needs1.push(need.id)
+            console.log(need) || need.people_id === person.get_key &&
+            typeof driveTime[need.get_key] === "undefined" &&
+            needs1.push(need.get_key)
         )
       );
       if (needs1.length > 0) {
         setTimeout(
-          () => getDriveTime(person.person_id, needs1, false),
+          () => getDriveTime(person.get_key, needs1, false),
           process.env.NODE_ENV === "development"
             ? numOfCalls++ * 15000
             : numOfCalls++ * 3000
@@ -269,13 +270,13 @@ const CommunicationTable = (props) => {
             props.shifts.map((shift) =>
               shift.needs.map(
                 (need) =>
-                  need.people_id === record.person_id &&
-                  typeof driveTime[need.id] === "undefined" &&
-                  needs1.push(need.id)
+                  need.people_id === record.get_key &&
+                  typeof driveTime[need.get_key] === "undefined" &&
+                  needs1.push(need.get_key)
               )
             );
             if (needs1.length > 0) {
-              getDriveTime(record.person_id, needs1, false);
+              getDriveTime(record.get_key, needs1, false);
             }
             const columns = [
               {
@@ -314,8 +315,8 @@ const CommunicationTable = (props) => {
                 render: (text, rowRecord, index) => {
                   return driveTime[
                     rowRecord.needs.filter(
-                      (need) => need.people_id === record.person_id
-                    )[0].id
+                      (need) => need.people_id === record.get_key
+                    )[0].get_key
                   ];
                 },
               },
@@ -329,10 +330,10 @@ const CommunicationTable = (props) => {
                   <AddTimeCard
                     need_id={
                       rowRecord.needs.filter(
-                        (need) => need.people_id === record.person_id
-                      )[0].id
+                        (need) => need.people_id === record.get_key
+                      )[0].get_key
                     }
-                    person_id={record.person_id}
+                    person_id={record.get_key}
                     timecards={props.timecards}
                     setTimecards={props.setTimecards}
                     shifts={props.shifts}
@@ -345,7 +346,7 @@ const CommunicationTable = (props) => {
             const data = props.shifts.filter(
               (shift) =>
                 shift.needs.filter(
-                  (need) => need.people_id === record.person_id
+                  (need) => need.people_id === record.get_key
                 ).length > 0
             );
             return <Table dataSource={data} columns={columns} />;
@@ -355,18 +356,18 @@ const CommunicationTable = (props) => {
           .filter(
             (shift) =>
               shift.needs.filter(
-                (need) => need.people_id === record.person_id
+                (need) => need.people_id === record.get_key
               ).length > 0
           )
           .flat().length ? (expanded ? (
             <MinusCircleOutlined onClick={e => onExpand(record, e)} />
           ) : (
             <>
-                <TrainingStep
-                  trainingImportance={0}
-                  title="Expand to see shifts worked and which ones have timecards received."
-                  trainingName="content_workforcetable_expand"
-                />
+                {/*<TrainingStep*/}
+                {/*  trainingImportance={0}*/}
+                {/*  title="Expand to see shifts worked and which ones have timecards received."*/}
+                {/*  trainingName="content_workforcetable_expand"*/}
+                {/*/>*/}
               <PlusSquareOutlined onClick={e => onExpand(record, e)} className="content_workforcetable_expand"/></>
           )) : <></>
         }}
