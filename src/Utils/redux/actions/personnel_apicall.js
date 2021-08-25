@@ -5,6 +5,7 @@ export function getShiftDetails(start_date, end_date) {
     params: {
       start_date,
       end_date,
+      scope:'payroll'
     },
   });
 }
